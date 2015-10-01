@@ -16,7 +16,7 @@ public class CameraControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log ("ball pos: " + ball.transform.position.z);
+		//Debug.Log ("ball pos: " + ball.transform.position.z);
 
 		if (ball.transform.position.z > -7f) {
 			transform.position = ball.transform.position + offset;

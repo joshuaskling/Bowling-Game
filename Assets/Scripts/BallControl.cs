@@ -5,7 +5,7 @@ public class BallControl : MonoBehaviour {
 	private float leftright;
 	private float updown;
 	private float offset = .02f;
-
+	
 	public static bool positionState;
 	public static bool throwState;
 	public static bool viewState;
@@ -23,6 +23,7 @@ public class BallControl : MonoBehaviour {
 		positionState = true;
 		throwState = false;
 		viewState = false;
+
 	}
 
 	void fireBall(Vector3 newBallVector){
@@ -39,6 +40,14 @@ public class BallControl : MonoBehaviour {
 
 		//actions for positioning
 		if (positionState == true) {
+			rb.useGravity = false;
+			throwState = false;
+			viewState = false;
+
+			rb.constraints = RigidbodyConstraints.None;
+
+			//rb.transform.TransformVector(new Vector3(0f,0f,0f));
+
 			//left/right arrow key control
 			if (Input.GetKey ("left") && (rb.position.x < .5f)) { 
 				rb.MovePosition (new Vector3 (rb.position.x + offset, rb.position.y, rb.position.z));
@@ -46,7 +55,7 @@ public class BallControl : MonoBehaviour {
 				rb.MovePosition (new Vector3 (rb.position.x - offset, rb.position.y, rb.position.z));
 			}
 
-			//left/right arrow key control
+			//up/down arrow key control
 			if (Input.GetKey ("up") && (rb.position.y < .6f)) { 
 				rb.MovePosition (new Vector3 (rb.position.x, rb.position.y + offset, rb.position.z));
 			} else if (Input.GetKey ("down") && (rb.position.y > 0f)) {
@@ -55,21 +64,24 @@ public class BallControl : MonoBehaviour {
 		}
 
 		//actions for throwing
-		if (Input.GetMouseButtonDown (0)) {
+		if (positionState == true && Input.GetMouseButtonDown (0)) {
 			Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
 
 			//Debug.Log ("mouse down");
 
 			//get start raycast
 			if (Physics.Raycast (camRay, out startHit)) {
-				Debug.Log (startHit.point.x);
+				//Debug.Log (startHit.point.x);
 			}
 
 			//go to pure throwing mode
 			positionState = false;
 
-		} else if (Input.GetMouseButtonUp (0)) {
+		} else if (positionState == false && Input.GetMouseButtonUp (0)) {
 			Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+			//increment throwNum
+			GameControl.controlThrowNum();
 
 			//initiate gravity
 			if (Input.GetMouseButtonUp (0)) {
@@ -79,7 +91,7 @@ public class BallControl : MonoBehaviour {
 
 			//get end raycast
 			if (Physics.Raycast (camRay, out endHit)){
-				Debug.Log (endHit.point.x);
+				//Debug.Log (endHit.point.x);
 			}
 
 			//add velocity and fire ball
